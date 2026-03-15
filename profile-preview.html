@@ -1,479 +1,973 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>nazwaumbara — GitHub Profile</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg:        #1a1b26;
-      --surface:   #1e1f2e;
-      --card:      #24253a;
-      --border:    #2e2f4a;
-      --accent:    #bd93f9;
-      --accent2:   #ff79c6;
-      --gold:      #f1c40f;
-      --text:      #cdd6f4;
-      --muted:     #6c7086;
-      --green:     #a6e3a1;
-      --cyan:      #89dceb;
-      --orange:    #fab387;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✿ Picsy Frame — Buat Photobox Sendiri!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blush: #FFD6E0; --lavender: #E8D5F5; --mint: #C8F0E8; --butter: #FFF3CC; --sky: #CCE8FF;
+  --rose: #F9A8C5; --lilac: #C9A8E8; --sage: #A8D8C8;
+  --text-dark: #4A3F5C; --text-mid: #7A6A8A; --text-light: #A89AB8; --white: #FFFCFF;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #FDF8FF;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* BG BLOBS */
+.bg-blobs {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.blob {
+  position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.35;
+  animation: blobFloat 10s ease-in-out infinite;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(20px,-20px) scale(1.05); }
+  66% { transform: translate(-15px,15px) scale(0.97); }
+}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Mono', monospace;
-      font-weight: 300;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 2.5rem;
+  background: rgba(253,248,255,0.85); backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(232,213,245,0.4);
+}
+.logo { font-family: 'Pacifico', cursive; font-size: 1.5rem; background: linear-gradient(135deg,#D470A2,#9B6FD4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.nav-steps { display: flex; gap: 0.5rem; }
+.nav-step {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.9rem; border-radius: 50px;
+  font-size: 0.78rem; font-weight: 500; color: var(--text-light);
+  border: 1.5px solid transparent; cursor: default; transition: all 0.3s;
+}
+.nav-step.active { color: white; background: linear-gradient(135deg,#D470A2,#9B6FD4); border-color: transparent; }
+.nav-step.done { color: #9B6FD4; border-color: #C9A8E8; background: #F5EEFF; }
+.nav-step-num {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: rgba(255,255,255,0.4); font-size: 0.65rem;
+  display: flex; align-items: center; justify-content: center;
+}
 
-    /* ── Background atmosphere ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 60% 50% at 80% 10%, rgba(189,147,249,.07) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(255,121,198,.05) 0%, transparent 55%),
-        radial-gradient(ellipse 30% 30% at 60% 50%, rgba(137,220,235,.03) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-    }
+/* PAGES */
+.page { display: none; position: relative; z-index: 1; min-height: calc(100vh - 65px); }
+.page.active { display: block; }
 
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 60px 24px 100px;
-    }
+/* ── PAGE 1: FRAME PICKER ── */
+#page-frame { padding: 2.5rem 2rem; }
+.page-hero { text-align: center; margin-bottom: 2.5rem; }
+.page-hero .eyebrow { font-size: 0.75rem; letter-spacing: 0.12em; color: var(--text-light); text-transform: uppercase; margin-bottom: 0.6rem; }
+.page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,4vw,3.2rem); color: var(--text-dark); line-height: 1.2; margin-bottom: 0.7rem; }
+.page-hero h1 em { font-style: italic; background: linear-gradient(135deg,#D470A2,#9B6FD4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.page-hero p { font-size: 0.95rem; color: var(--text-mid); font-weight: 300; max-width: 460px; margin: 0 auto; line-height: 1.7; }
 
-    /* ── Header ── */
-    .header {
-      text-align: center;
-      margin-bottom: 72px;
-      animation: fadeUp .9s ease both;
-    }
+.filter-bar { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+.filt {
+  padding: 0.4rem 1.1rem; border-radius: 50px;
+  border: 1.5px solid rgba(200,170,230,0.35);
+  background: rgba(255,255,255,0.7);
+  color: var(--text-mid); font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+}
+.filt:hover { border-color: #C9A8E8; color: #9B6FD4; }
+.filt.on { background: linear-gradient(135deg,#F9A8C5,#C9A8E8); color: white; border-color: transparent; box-shadow: 0 4px 14px rgba(200,150,210,0.3); }
 
-    .header-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px;
-      letter-spacing: .35em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 20px;
-      opacity: .8;
-    }
+.frames-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.4rem; max-width: 1160px; margin: 0 auto;
+}
+.frame-card {
+  background: rgba(255,255,255,0.8); border: 1.5px solid rgba(232,213,245,0.5);
+  border-radius: 22px; overflow: hidden; cursor: pointer; transition: all 0.3s;
+  position: relative;
+}
+.frame-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(180,120,210,0.18); border-color: rgba(200,160,240,0.6); }
+.frame-card.selected { border-color: #C9A8E8; box-shadow: 0 0 0 3px rgba(200,160,240,0.4), 0 16px 40px rgba(180,120,210,0.2); }
+.frame-card.selected::after {
+  content: '✓';
+  position: absolute; top: 10px; right: 10px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg,#D470A2,#9B6FD4);
+  color: white; font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
 
-    .header h1 {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2.6rem, 6vw, 4.2rem);
-      font-weight: 600;
-      letter-spacing: .06em;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 50%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-      margin-bottom: 16px;
-    }
+.frame-thumb {
+  width: 100%; aspect-ratio: 2/3;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem; position: relative; overflow: hidden;
+}
+.thumb-inner {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  gap: 5px; position: relative;
+}
+.thumb-inner.row { flex-direction: row; }
+.thumb-slot {
+  flex: 1; background: rgba(255,255,255,0.55);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+}
+.thumb-slot svg { width: 20px; height: 20px; opacity: 0.3; }
+.frame-label { padding: 0.9rem 1.1rem 1rem; }
+.frame-label h3 { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 0.2rem; }
+.frame-label p { font-size: 0.75rem; color: var(--text-light); font-weight: 300; }
+.frame-label .pills { display: flex; gap: 0.3rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.pill { font-size: 0.65rem; padding: 0.15rem 0.55rem; border-radius: 50px; font-weight: 500; }
+.p-pink { background: #FFE0EC; color: #C05E8A; }
+.p-purple { background: #EDE0FA; color: #7A50B0; }
+.p-mint { background: #DCFAF2; color: #3A8A70; }
+.p-sky { background: #DCF0FF; color: #2A6A9A; }
+.p-amber { background: #FFF5CC; color: #9A7A10; }
 
-    .header-tagline {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 1.25rem;
-      color: var(--muted);
-      letter-spacing: .04em;
-    }
+.cta-bar { display: flex; justify-content: center; padding: 2.5rem 0 1rem; }
+.btn-grad {
+  background: linear-gradient(135deg,#D470A2,#9B6FD4);
+  color: white; border: none; padding: 0.95rem 2.8rem;
+  border-radius: 50px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 500; cursor: pointer;
+  box-shadow: 0 6px 24px rgba(180,100,190,0.35); transition: all 0.2s;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.btn-grad:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(180,100,190,0.45); }
+.btn-grad:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .header-rule {
-      margin: 28px auto 0;
-      width: 80px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    }
+/* ── PAGE 2: UPLOAD ── */
+#page-upload { padding: 2.5rem 2rem; max-width: 700px; margin: 0 auto; }
+.back-btn {
+  display: flex; align-items: center; gap: 0.4rem;
+  color: var(--text-light); font-size: 0.85rem; cursor: pointer;
+  background: none; border: none; font-family: 'DM Sans', sans-serif;
+  margin-bottom: 1.8rem; transition: color 0.2s; padding: 0;
+}
+.back-btn:hover { color: var(--text-dark); }
 
-    /* ── Section ── */
-    .section {
-      margin-bottom: 56px;
-      animation: fadeUp .9s ease both;
-    }
-    .section:nth-child(2)  { animation-delay: .1s; }
-    .section:nth-child(3)  { animation-delay: .2s; }
-    .section:nth-child(4)  { animation-delay: .3s; }
-    .section:nth-child(5)  { animation-delay: .4s; }
-    .section:nth-child(6)  { animation-delay: .5s; }
+.upload-header { text-align: center; margin-bottom: 2rem; }
+.upload-header h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+.upload-header p { font-size: 0.9rem; color: var(--text-mid); font-weight: 300; line-height: 1.6; }
+.slot-count { display: inline-block; background: linear-gradient(135deg,#F9A8C5,#C9A8E8); color: white; padding: 0.2rem 0.7rem; border-radius: 50px; font-size: 0.8rem; font-weight: 500; margin-top: 0.4rem; }
 
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 9.5px;
-      letter-spacing: .4em;
-      text-transform: uppercase;
-      color: var(--accent2);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--border), transparent);
-    }
+.slots-container { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+.upload-slot {
+  background: rgba(255,255,255,0.8); border: 2px dashed rgba(200,160,240,0.4);
+  border-radius: 18px; padding: 1.4rem; display: flex; align-items: center; gap: 1.2rem;
+  cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden;
+}
+.upload-slot:hover { border-color: rgba(200,160,240,0.8); background: rgba(245,235,255,0.6); }
+.upload-slot.filled { border-style: solid; border-color: rgba(200,160,240,0.5); background: rgba(255,255,255,0.95); }
+.slot-num {
+  width: 44px; height: 44px; border-radius: 14px; flex-shrink: 0;
+  background: linear-gradient(135deg,#F9A8C5,#C9A8E8);
+  color: white; font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+  font-style: italic;
+}
+.slot-preview { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; flex-shrink: 0; border: 2px solid rgba(200,160,240,0.3); }
+.slot-info { flex: 1; }
+.slot-info .si-title { font-weight: 500; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 0.15rem; }
+.slot-info .si-sub { font-size: 0.78rem; color: var(--text-light); font-weight: 300; }
+.slot-action {
+  font-size: 0.78rem; color: #9B6FD4; font-weight: 500;
+  background: #F5EEFF; border-radius: 50px; padding: 0.3rem 0.8rem;
+  flex-shrink: 0; transition: all 0.2s;
+}
+.upload-slot:hover .slot-action { background: #C9A8E8; color: white; }
+.slot-remove {
+  position: absolute; top: 8px; right: 8px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(240,80,120,0.12); border: none; cursor: pointer;
+  font-size: 0.65rem; color: #D45080; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+}
+.upload-slot.filled:hover .slot-remove { opacity: 1; }
 
-    /* ── Connect ── */
-    .connect-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+.upload-tips-box {
+  background: linear-gradient(135deg, rgba(255,216,230,0.3), rgba(232,213,245,0.3));
+  border: 1px solid rgba(249,168,197,0.3); border-radius: 16px; padding: 1.2rem 1.4rem;
+  margin-bottom: 2rem;
+}
+.upload-tips-box .tip-head { font-size: 0.8rem; font-weight: 500; color: var(--text-mid); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+.upload-tips-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+.upload-tips-box li { font-size: 0.78rem; color: var(--text-light); font-weight: 300; padding-left: 1.1rem; position: relative; line-height: 1.5; }
+.upload-tips-box li::before { content: '✦'; position: absolute; left: 0; font-size: 0.6rem; color: var(--rose); }
 
-    .connect-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 10px 22px;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      background: var(--card);
-      color: var(--text);
-      text-decoration: none;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      transition: all .25s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .connect-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      opacity: 0;
-      transition: opacity .25s ease;
-    }
-    .connect-btn:hover::before { opacity: .12; }
-    .connect-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(189,147,249,.15);
-    }
-    .connect-btn svg { position: relative; z-index: 1; flex-shrink: 0; }
-    .connect-btn span { position: relative; z-index: 1; }
+/* ── PAGE 3: PREVIEW / EDITOR ── */
+#page-preview { padding: 2rem; }
+.preview-layout { display: grid; grid-template-columns: 1fr 340px; gap: 2rem; max-width: 1100px; margin: 0 auto; }
 
-    /* ── Skills ── */
-    .skill-group { margin-bottom: 24px; }
-    .skill-group-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: .95rem;
-      color: var(--muted);
-      margin-bottom: 10px;
-      letter-spacing: .06em;
-    }
-    .skill-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 10.5px;
-      letter-spacing: .1em;
-      padding: 6px 14px;
-      border: 1px solid var(--border);
-      border-radius: 2px;
-      background: var(--card);
-      color: var(--text);
-      transition: all .2s;
-    }
-    .tag:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(189,147,249,.06);
-    }
-    .tag.lang    { border-color: rgba(137,220,235,.3); color: var(--cyan); }
-    .tag.ai      { border-color: rgba(255,121,198,.3); color: var(--accent2); }
-    .tag.db      { border-color: rgba(166,227,161,.3); color: var(--green); }
-    .tag.edu     { border-color: rgba(241,196,15,.3);  color: var(--gold); }
+.canvas-wrapper {
+  background: rgba(255,255,255,0.8); border: 1.5px solid rgba(232,213,245,0.5);
+  border-radius: 24px; padding: 2rem; display: flex; flex-direction: column; align-items: center;
+}
+.canvas-wrapper h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text-dark); margin-bottom: 1.2rem; align-self: flex-start; }
+#resultCanvas {
+  border-radius: 12px; max-width: 100%; height: auto;
+  box-shadow: 0 8px 30px rgba(100,60,140,0.15);
+}
+.canvas-loader { text-align: center; padding: 3rem; color: var(--text-light); font-size: 0.9rem; }
 
-    /* ── Stats cards ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 580px) { .stats-grid { grid-template-columns: 1fr; } }
+.editor-panel {
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+.panel-card {
+  background: rgba(255,255,255,0.85); border: 1.5px solid rgba(232,213,245,0.4);
+  border-radius: 18px; padding: 1.3rem 1.4rem;
+}
+.panel-card h3 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text-dark); margin-bottom: 1rem; }
 
-    .stat-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--card);
-      overflow: hidden;
-      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    }
-    .stat-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 32px rgba(0,0,0,.4);
-      border-color: var(--accent);
-    }
-    .stat-card img { width: 100%; display: block; }
+.color-swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; }
+.swatch {
+  aspect-ratio: 1; border-radius: 10px; cursor: pointer; transition: all 0.2s;
+  border: 2.5px solid transparent; position: relative;
+}
+.swatch:hover { transform: scale(1.08); }
+.swatch.on { border-color: #9B6FD4; transform: scale(1.08); }
+.swatch.on::after {
+  content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; color: rgba(80,40,120,0.8);
+}
 
-    /* ── Contribution highlight ── */
-    .contrib-highlight {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--card);
-      padding: 20px 24px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-    .contrib-number {
-      font-family: 'Cinzel', serif;
-      font-size: 2.8rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-    .contrib-text {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .contrib-text strong {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      color: var(--text);
-      font-weight: 600;
-      letter-spacing: .04em;
-    }
-    .contrib-text span {
-      font-size: 10px;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
+.option-row { display: flex; flex-direction: column; gap: 0.5rem; }
+.opt-label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.07em; }
+.toggle-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.toggle-btn {
+  padding: 0.35rem 0.85rem; border-radius: 50px; border: 1.5px solid rgba(200,160,240,0.35);
+  background: rgba(255,255,255,0.7); color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+}
+.toggle-btn:hover { border-color: #C9A8E8; color: #9B6FD4; }
+.toggle-btn.on { background: linear-gradient(135deg,#F9A8C5,#C9A8E8); color: white; border-color: transparent; }
 
-    .snake-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      background: var(--card);
-      padding: 20px;
-      overflow: hidden;
-      transition: border-color .25s;
-    }
-    .snake-card:hover { border-color: var(--accent); }
-    .snake-card img { width: 100%; display: block; filter: hue-rotate(0deg); }
+.range-wrap { display: flex; align-items: center; gap: 0.8rem; }
+.range-wrap input[type=range] {
+  flex: 1; -webkit-appearance: none; height: 4px;
+  background: linear-gradient(90deg,#F9A8C5,#C9A8E8); border-radius: 10px; outline: none;
+}
+.range-wrap input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: linear-gradient(135deg,#D470A2,#9B6FD4); cursor: pointer;
+  box-shadow: 0 2px 8px rgba(200,100,190,0.4);
+}
+.range-val { font-size: 0.8rem; font-weight: 500; color: #9B6FD4; min-width: 28px; text-align: right; }
 
-    /* ── Footer ── */
-    .footer {
-      text-align: center;
-      margin-top: 72px;
-      padding-top: 32px;
-      border-top: 1px solid var(--border);
-      animation: fadeUp .9s .6s ease both;
-    }
-    .footer-quote {
-      font-family: 'Cormorant Garamond', serif;
-      font-style: italic;
-      font-size: 1.15rem;
-      color: var(--muted);
-      margin-bottom: 20px;
-      letter-spacing: .03em;
-    }
-    .footer-views {
-      display: inline-block;
-    }
-    .footer-views img { height: 22px; }
+.text-input {
+  width: 100%; padding: 0.65rem 0.9rem; border-radius: 10px;
+  border: 1.5px solid rgba(200,160,240,0.3); background: rgba(255,255,255,0.9);
+  font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--text-dark);
+  outline: none; transition: border-color 0.2s;
+}
+.text-input:focus { border-color: #C9A8E8; }
 
-    /* ── Animations ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(22px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+.download-btn {
+  width: 100%; background: linear-gradient(135deg,#D470A2,#9B6FD4);
+  color: white; border: none; padding: 1rem;
+  border-radius: 14px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 6px 20px rgba(180,100,190,0.35); display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+}
+.download-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(180,100,190,0.45); }
 
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+.restart-btn {
+  width: 100%; background: rgba(255,255,255,0.8);
+  border: 1.5px solid rgba(200,160,240,0.4); color: var(--text-mid);
+  padding: 0.7rem; border-radius: 14px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem; cursor: pointer; transition: all 0.2s; margin-top: 0.4rem;
+}
+.restart-btn:hover { background: white; border-color: #C9A8E8; color: #9B6FD4; }
 
-    /* ── README note ── */
-    .readme-note {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 12px 18px;
-      font-size: 10px;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      z-index: 100;
-    }
-    .readme-note span { color: var(--accent); }
-  </style>
+/* FRAME STAMP DECORATION */
+.stamp-deco {
+  font-size: 0.7rem; color: rgba(160,130,180,0.6);
+  text-align: center; margin-top: 1rem;
+  font-family: 'Pacifico', cursive;
+}
+
+@media (max-width: 768px) {
+  .preview-layout { grid-template-columns: 1fr; }
+  nav { padding: 0.8rem 1rem; }
+  .nav-steps { gap: 0.3rem; }
+  .nav-step span:not(.nav-step-num) { display: none; }
+  .frames-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+</style>
 </head>
 <body>
 
-<div class="wrapper">
-
-  <!-- ─── HEADER ─── -->
-  <header class="header">
-    <p class="header-eyebrow">✦ &nbsp; GitHub Profile &nbsp; ✦</p>
-    <h1>Nazwaumbara</h1>
-    <p class="header-tagline">Developer · Data Enthusiast · Lifelong Learner</p>
-    <div class="header-rule"></div>
-  </header>
-
-  <!-- ─── CONNECT ─── -->
-  <section class="section">
-    <p class="section-label">Connect</p>
-    <div class="connect-grid">
-
-      <a class="connect-btn" href="https://www.instagram.com/nazwaumbara/" target="_blank" rel="noopener">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-        <span>Instagram</span>
-      </a>
-
-      <a class="connect-btn" href="https://www.linkedin.com/in/nazwaumbara/" target="_blank" rel="noopener">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-        </svg>
-        <span>LinkedIn</span>
-      </a>
-
-      <a class="connect-btn" href="mailto:nazwaumbara@gmail.com">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
-        </svg>
-        <span>Email</span>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- ─── SKILLS ─── -->
-  <section class="section">
-    <p class="section-label">Tech Stack</p>
-
-    <div class="skill-group">
-      <p class="skill-group-title">Languages</p>
-      <div class="skill-tags">
-        <span class="tag lang">Python</span>
-        <span class="tag lang">JavaScript</span>
-        <span class="tag lang">Dart</span>
-        <span class="tag lang">Go</span>
-        <span class="tag lang">C++</span>
-        <span class="tag lang">HTML5</span>
-      </div>
-    </div>
-
-    <div class="skill-group">
-      <p class="skill-group-title">AI / Machine Learning</p>
-      <div class="skill-tags">
-        <span class="tag ai">TensorFlow</span>
-        <span class="tag ai">Keras</span>
-        <span class="tag ai">NumPy</span>
-        <span class="tag ai">Pandas</span>
-        <span class="tag ai">Plotly</span>
-      </div>
-    </div>
-
-    <div class="skill-group">
-      <p class="skill-group-title">Databases</p>
-      <div class="skill-tags">
-        <span class="tag db">MongoDB</span>
-        <span class="tag db">MySQL</span>
-      </div>
-    </div>
-
-    <div class="skill-group">
-      <p class="skill-group-title">Education</p>
-      <div class="skill-tags">
-        <span class="tag edu">Coursera</span>
-        <span class="tag edu">Udemy</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── STATS ─── -->
-  <section class="section">
-    <p class="section-label">GitHub Stats</p>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <img
-          src="https://nirzak-streak-stats.vercel.app/?user=nazwaumbara&theme=dracula&hide_border=true&background=1e1f2e&ring=bd93f9&fire=ff79c6&currStreakLabel=bd93f9&sideLabels=6c7086&dates=6c7086&stroke=2e2f4a"
-          alt="GitHub Streak Stats"
-          loading="lazy"
-        />
-      </div>
-      <div class="stat-card">
-        <img
-          src="https://github-readme-stats.vercel.app/api/top-langs/?username=nazwaumbara&theme=dracula&hide_border=true&include_all_commits=true&count_private=true&layout=compact&bg_color=1e1f2e&title_color=bd93f9&text_color=cdd6f4&border_color=2e2f4a"
-          alt="Top Languages"
-          loading="lazy"
-        />
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── CONTRIBUTIONS ─── -->
-  <section class="section">
-    <p class="section-label">Activity 2026</p>
-
-    <div class="contrib-highlight">
-      <div class="contrib-number">64</div>
-      <div class="contrib-text">
-        <strong>Contributions this year</strong>
-        <span>January – March 2026 &nbsp;·&nbsp; GitHub Activity</span>
-      </div>
-    </div>
-
-    <div class="snake-card">
-      <img
-        src="https://raw.githubusercontent.com/nazwaumbara/nazwaumbara/output/snake.svg"
-        alt="Contribution Snake"
-        loading="lazy"
-      />
-    </div>
-  </section>
-
-  <!-- ─── FOOTER ─── -->
-  <footer class="footer">
-    <p class="footer-quote">"Code is poetry written in logic."</p>
-    <div class="footer-views">
-      <img
-        src="https://komarev.com/ghpvc/?username=nazwaumbara&color=bd93f9&style=flat-square&label=profile+views"
-        alt="Profile Views"
-      />
-    </div>
-  </footer>
-
+<!-- BG BLOBS -->
+<div class="bg-blobs">
+  <div class="blob" style="width:500px;height:500px;background:#FFD6E0;top:-100px;left:-100px;animation-delay:0s"></div>
+  <div class="blob" style="width:400px;height:400px;background:#E8D5F5;top:30%;right:-80px;animation-delay:3s"></div>
+  <div class="blob" style="width:350px;height:350px;background:#C8F0E8;bottom:0;left:20%;animation-delay:6s"></div>
 </div>
 
-<div class="readme-note">Preview &nbsp;·&nbsp; <span>README.md</span></div>
+<!-- NAV -->
+<nav>
+  <div class="logo">Picsy ✿</div>
+  <div class="nav-steps">
+    <div class="nav-step active" id="ns1"><span class="nav-step-num">1</span><span>Pilih Frame</span></div>
+    <div class="nav-step" id="ns2"><span class="nav-step-num">2</span><span>Upload Foto</span></div>
+    <div class="nav-step" id="ns3"><span class="nav-step-num">3</span><span>Preview & Unduh</span></div>
+  </div>
+</nav>
 
+<!-- ════════ PAGE 1: FRAME PICKER ════════ -->
+<div class="page active" id="page-frame">
+  <div class="page-hero">
+    <div class="eyebrow">✦ photobox digital</div>
+    <h1>Pilih <em>Frame</em> Kesayanganmu</h1>
+    <p>Upload foto dari galerimu dan wujudkan hasil cetak photobox yang aesthetic!</p>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filt on" onclick="filterF('all',this)">Semua</button>
+    <button class="filt" onclick="filterF('2',this)">2 Foto</button>
+    <button class="filt" onclick="filterF('3',this)">3 Foto</button>
+    <button class="filt" onclick="filterF('4',this)">4 Foto</button>
+    <button class="filt" onclick="filterF('wide',this)">Wide</button>
+    <button class="filt" onclick="filterF('strip',this)">Strip</button>
+  </div>
+
+  <div class="frames-grid" id="framesGrid"></div>
+
+  <div class="cta-bar">
+    <button class="btn-grad" id="btnNext1" disabled onclick="goUpload()">
+      <span>Lanjut Upload Foto</span> <span>→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ════════ PAGE 2: UPLOAD ════════ -->
+<div class="page" id="page-upload">
+  <button class="back-btn" onclick="goFrame()">← Kembali pilih frame</button>
+  <div class="upload-header">
+    <h2>Upload Foto Kamu</h2>
+    <p>Pilih foto dari galeri untuk mengisi setiap slot frame</p>
+    <div class="slot-count" id="slotCountBadge">Butuh 4 foto</div>
+  </div>
+  <div class="slots-container" id="slotsContainer"></div>
+  <div class="upload-tips-box">
+    <div class="tip-head">💡 Tips foto terbaik</div>
+    <ul>
+      <li>Gunakan foto portrait (vertikal) agar hasil lebih optimal</li>
+      <li>Pilih foto dengan pencahayaan yang cukup terang</li>
+      <li>Resolusi minimal 800×600px untuk hasil cetak tajam</li>
+      <li>Foto akan di-crop otomatis ke rasio yang sesuai frame</li>
+    </ul>
+  </div>
+  <div style="display:flex;justify-content:center;">
+    <button class="btn-grad" id="btnNext2" disabled onclick="goPreview()">
+      <span>Buat Frame Sekarang ✨</span>
+    </button>
+  </div>
+</div>
+
+<!-- ════════ PAGE 3: PREVIEW ════════ -->
+<div class="page" id="page-preview">
+  <div class="preview-layout">
+    <div class="canvas-wrapper">
+      <h2>Preview Frame ✿</h2>
+      <div class="canvas-loader" id="canvasLoader">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🌸</div>
+        Sedang membuat frame cantikmu...
+      </div>
+      <canvas id="resultCanvas" style="display:none"></canvas>
+      <div class="stamp-deco" id="stampDeco" style="display:none">picsy frame ✿ — made with love</div>
+    </div>
+
+    <div class="editor-panel">
+      <!-- Frame color -->
+      <div class="panel-card">
+        <h3>🎨 Warna Border</h3>
+        <div class="color-swatches" id="colorSwatches"></div>
+      </div>
+
+      <!-- Layout options -->
+      <div class="panel-card">
+        <h3>✦ Opsi Tampilan</h3>
+        <div class="option-row" style="margin-bottom:0.9rem">
+          <div class="opt-label">Foto Fit</div>
+          <div class="toggle-row">
+            <button class="toggle-btn on" id="fitCover" onclick="setFit('cover',this)">Cover</button>
+            <button class="toggle-btn" id="fitContain" onclick="setFit('contain',this)">Contain</button>
+          </div>
+        </div>
+        <div class="option-row" style="margin-bottom:0.9rem">
+          <div class="opt-label">Tampilkan Teks Bawah</div>
+          <div class="toggle-row">
+            <button class="toggle-btn on" id="showTextYes" onclick="setShowText(true,this)">Ya</button>
+            <button class="toggle-btn" id="showTextNo" onclick="setShowText(false,this)">Tidak</button>
+          </div>
+        </div>
+        <div id="textInputRow" class="option-row">
+          <div class="opt-label">Teks Custom</div>
+          <input class="text-input" id="customText" type="text" placeholder="e.g. memories ♡ · 2025" maxlength="40" oninput="renderCanvas()">
+        </div>
+      </div>
+
+      <!-- Border width -->
+      <div class="panel-card">
+        <h3>📐 Ukuran Border</h3>
+        <div class="option-row">
+          <div class="opt-label">Ketebalan</div>
+          <div class="range-wrap">
+            <input type="range" min="8" max="50" value="20" id="borderWidth" oninput="setBorderWidth(this)">
+            <span class="range-val" id="borderWidthVal">20</span>
+          </div>
+        </div>
+        <div class="option-row" style="margin-top:0.8rem">
+          <div class="opt-label">Gap antar foto</div>
+          <div class="range-wrap">
+            <input type="range" min="0" max="20" value="4" id="gapSize" oninput="setGap(this)">
+            <span class="range-val" id="gapSizeVal">4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Download -->
+      <div class="panel-card">
+        <button class="download-btn" onclick="downloadResult()">⬇ Unduh Foto (PNG)</button>
+        <button class="restart-btn" onclick="restart()">← Mulai Ulang</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HIDDEN FILE INPUT -->
+<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleFile(event)">
+
+<script>
+// ══════════════════════════════════
+// FRAME DEFINITIONS
+// ══════════════════════════════════
+const FRAMES = [
+  {
+    id:'blush-classic', name:'Blush Classic', desc:'4 foto vertikal, pink manis',
+    shots:4, layout:'strip', cat:['4','strip'],
+    thumbBg:'linear-gradient(160deg,#FFE8EE,#FFD0E0)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#FFB3C8',
+    pillColor:'p-pink', pillText:'4 Foto · Strip',
+    defaultColor:'#FFB3C8'
+  },
+  {
+    id:'lavender-dream', name:'Lavender Dream', desc:'2 foto vertikal, dreamy ungu',
+    shots:2, layout:'strip', cat:['2','strip'],
+    thumbBg:'linear-gradient(160deg,#EDE0FA,#DDD0F5)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#C9A8E8',
+    pillColor:'p-purple', pillText:'2 Foto · Strip',
+    defaultColor:'#C9A8E8'
+  },
+  {
+    id:'mint-fresh', name:'Mint Fresh', desc:'4 foto vertikal, fresh mint',
+    shots:4, layout:'strip', cat:['4','strip'],
+    thumbBg:'linear-gradient(160deg,#DAFAF0,#C0EEE0)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#A8E6D4',
+    pillColor:'p-mint', pillText:'4 Foto · Strip',
+    defaultColor:'#A8D8C8'
+  },
+  {
+    id:'butter-soft', name:'Butter Soft', desc:'2 foto, frame kuning lembut',
+    shots:2, layout:'strip', cat:['2'],
+    thumbBg:'linear-gradient(160deg,#FFFAE0,#FFF3C0)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#FFD54F',
+    pillColor:'p-amber', pillText:'2 Foto',
+    defaultColor:'#FFD54F'
+  },
+  {
+    id:'sky-ribbon', name:'Sky Ribbon', desc:'3 foto horizontal, wide layout',
+    shots:3, layout:'wide', cat:['3','wide'],
+    thumbBg:'linear-gradient(160deg,#E0F0FF,#CCE4FF)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#80BFFF',
+    pillColor:'p-sky', pillText:'3 Foto · Wide',
+    defaultColor:'#80BFFF'
+  },
+  {
+    id:'polaroid', name:'Polaroid Peach', desc:'4 foto, gaya polaroid klasik',
+    shots:4, layout:'polaroid', cat:['4','strip'],
+    thumbBg:'linear-gradient(160deg,#FFF8F0,#FFE8D0)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#FFFFFF',
+    pillColor:'p-amber', pillText:'4 Foto · Polaroid',
+    defaultColor:'#FFFFFF'
+  },
+  {
+    id:'rainbow-candy', name:'Rainbow Candy', desc:'2 foto, border gradient pelangi',
+    shots:2, layout:'strip', cat:['2'],
+    thumbBg:'linear-gradient(160deg,#FFF0F8,#F8F0FF)',
+    slotBg:'rgba(255,255,255,0.55)', border:'rainbow',
+    pillColor:'p-pink', pillText:'2 Foto · Rainbow',
+    defaultColor:'rainbow'
+  },
+  {
+    id:'heart-duo', name:'Heart Duo', desc:'2 foto side by side, wide sweet',
+    shots:2, layout:'wide', cat:['2','wide'],
+    thumbBg:'linear-gradient(160deg,#FFF5F8,#FFE8F0)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#FFAAC5',
+    pillColor:'p-pink', pillText:'2 Foto · Wide',
+    defaultColor:'#FFAAC5'
+  },
+  {
+    id:'floral-bloom', name:'Floral Bloom', desc:'4 foto dengan hiasan bunga sudut',
+    shots:4, layout:'strip', cat:['4','strip'],
+    thumbBg:'linear-gradient(160deg,#FFE8F0,#FFD0E4)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#F9A8C5',
+    pillColor:'p-pink', pillText:'4 Foto · Floral',
+    defaultColor:'#F9A8C5'
+  },
+  {
+    id:'triple-square', name:'Triple Square', desc:'3 foto kotak, tata letak simetris',
+    shots:3, layout:'triple', cat:['3'],
+    thumbBg:'linear-gradient(160deg,#EDE0FA,#DDD5FA)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#C9A8E8',
+    pillColor:'p-purple', pillText:'3 Foto · Square',
+    defaultColor:'#C9A8E8'
+  },
+  {
+    id:'pastel-six', name:'Pastel Six', desc:'6 foto kecil dalam grid cantik',
+    shots:6, layout:'grid2x3', cat:['strip'],
+    thumbBg:'linear-gradient(160deg,#FFE8EE,#EDE0FA)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#F9A8C5',
+    pillColor:'p-pink', pillText:'6 Foto · Grid',
+    defaultColor:'#F9A8C5'
+  },
+  {
+    id:'starry-night', name:'Starry Night', desc:'4 foto, ornamen bintang magical',
+    shots:4, layout:'strip', cat:['4','strip'],
+    thumbBg:'linear-gradient(160deg,#EDE5FF,#DDD0F8)',
+    slotBg:'rgba(255,255,255,0.55)', border:'#C9A8E8',
+    pillColor:'p-purple', pillText:'4 Foto · Starry',
+    defaultColor:'#C9A8E8'
+  },
+];
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let selectedFrame = null;
+let uploadedPhotos = []; // array of {slot, dataURL}
+let currentSlotIndex = -1;
+let canvasOptions = {
+  borderColor: null,
+  borderWidth: 20,
+  gap: 4,
+  fit: 'cover',
+  showText: true,
+  customText: '',
+};
+
+// ══════════════════════════════════
+// RENDER FRAME CARDS
+// ══════════════════════════════════
+function renderFrameCards(filter='all') {
+  const grid = document.getElementById('framesGrid');
+  grid.innerHTML = '';
+  const camIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3"/><path d="M8 7V5a1 1 0 011-1h6a1 1 0 011 1v2"/></svg>`;
+
+  FRAMES.forEach(f => {
+    const show = filter==='all' || f.cat.includes(filter);
+    if (!show) return;
+
+    const div = document.createElement('div');
+    div.className = 'frame-card' + (selectedFrame?.id===f.id ? ' selected' : '');
+    div.dataset.id = f.id;
+    div.onclick = () => selectFrame(f.id);
+
+    // Build thumb
+    let thumbHTML = '';
+    if (f.layout === 'wide' || f.layout==='triple') {
+      thumbHTML = `<div class="thumb-inner row" style="gap:4px">` +
+        Array(f.shots).fill(`<div class="thumb-slot">${camIcon}</div>`).join('') +
+        `</div>`;
+    } else if (f.layout === 'grid2x3') {
+      thumbHTML = `<div class="thumb-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:4px">` +
+        Array(f.shots).fill(`<div class="thumb-slot" style="aspect-ratio:1">${camIcon}</div>`).join('') +
+        `</div>`;
+    } else {
+      thumbHTML = `<div class="thumb-inner" style="gap:5px">` +
+        Array(f.shots).fill(`<div class="thumb-slot">${camIcon}</div>`).join('') +
+        `</div>`;
+    }
+
+    div.innerHTML = `
+      <div class="frame-thumb" style="background:${f.thumbBg}">
+        ${thumbHTML}
+      </div>
+      <div class="frame-label">
+        <h3>${f.name}</h3>
+        <p>${f.desc}</p>
+        <div class="pills"><span class="pill ${f.pillColor}">${f.pillText}</span></div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+function filterF(cat, btn) {
+  document.querySelectorAll('.filt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderFrameCards(cat);
+}
+
+function selectFrame(id) {
+  selectedFrame = FRAMES.find(f=>f.id===id);
+  document.querySelectorAll('.frame-card').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.id===id);
+  });
+  document.getElementById('btnNext1').disabled = false;
+}
+
+renderFrameCards();
+
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const s = document.getElementById('ns'+i);
+    s.classList.remove('active','done');
+    if (i===n) s.classList.add('active');
+    else if (i<n) s.classList.add('done');
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+}
+
+function goUpload() {
+  setStep(2);
+  document.getElementById('page-upload').classList.add('active');
+  buildSlots();
+  window.scrollTo(0,0);
+}
+
+function goFrame() {
+  setStep(1);
+  document.getElementById('page-frame').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goPreview() {
+  setStep(3);
+  document.getElementById('page-preview').classList.add('active');
+  window.scrollTo(0,0);
+  canvasOptions.borderColor = selectedFrame.defaultColor;
+  buildColorSwatches();
+  canvasOptions.customText = document.getElementById('customText').value || 'picsy frame ✿ · memories';
+  document.getElementById('customText').value = canvasOptions.customText;
+  setTimeout(renderCanvas, 100);
+}
+
+function restart() {
+  selectedFrame = null;
+  uploadedPhotos = [];
+  document.getElementById('btnNext1').disabled = true;
+  setStep(1);
+  document.getElementById('page-frame').classList.add('active');
+  renderFrameCards();
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════
+// UPLOAD SLOTS
+// ══════════════════════════════════
+function buildSlots() {
+  const n = selectedFrame.shots;
+  document.getElementById('slotCountBadge').textContent = `Butuh ${n} foto`;
+  const container = document.getElementById('slotsContainer');
+  container.innerHTML = '';
+  if (uploadedPhotos.length === 0) {
+    uploadedPhotos = Array(n).fill(null);
+  } else if (uploadedPhotos.length < n) {
+    while (uploadedPhotos.length < n) uploadedPhotos.push(null);
+  } else {
+    uploadedPhotos = uploadedPhotos.slice(0, n);
+  }
+
+  for (let i=0; i<n; i++) {
+    const div = document.createElement('div');
+    div.className = 'upload-slot' + (uploadedPhotos[i] ? ' filled' : '');
+    div.id = `slot-${i}`;
+    div.onclick = () => openFilePicker(i);
+
+    const photo = uploadedPhotos[i];
+    div.innerHTML = `
+      <div class="slot-num">${i+1}</div>
+      ${photo ? `<img class="slot-preview" src="${photo}" alt="foto ${i+1}">` : ''}
+      <div class="slot-info">
+        <div class="si-title">${photo ? `Foto ${i+1} ✓` : `Slot ${i+1} — Belum ada foto`}</div>
+        <div class="si-sub">${photo ? 'Klik untuk ganti foto' : 'Klik untuk upload dari galeri'}</div>
+      </div>
+      <div class="slot-action">${photo ? '🔄 Ganti' : '+ Upload'}</div>
+      ${photo ? `<button class="slot-remove" onclick="removePhoto(event,${i})">✕</button>` : ''}
+    `;
+    container.appendChild(div);
+  }
+  checkUploadReady();
+}
+
+function openFilePicker(slotIndex) {
+  currentSlotIndex = slotIndex;
+  document.getElementById('fileInput').value = '';
+  document.getElementById('fileInput').click();
+}
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    uploadedPhotos[currentSlotIndex] = ev.target.result;
+    buildSlots();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(e, i) {
+  e.stopPropagation();
+  uploadedPhotos[i] = null;
+  buildSlots();
+}
+
+function checkUploadReady() {
+  const ready = uploadedPhotos.every(p=>p!==null);
+  document.getElementById('btnNext2').disabled = !ready;
+}
+
+// ══════════════════════════════════
+// COLOR SWATCHES
+// ══════════════════════════════════
+const PALETTE = [
+  {label:'Blush',    v:'#FFB3C8'},
+  {label:'Lavender', v:'#C9A8E8'},
+  {label:'Mint',     v:'#A8D8C8'},
+  {label:'Butter',   v:'#FFD54F'},
+  {label:'Sky',      v:'#80BFFF'},
+  {label:'Peach',    v:'#FFBB94'},
+  {label:'Lilac',    v:'#E0B4F0'},
+  {label:'Sage',     v:'#B0D8B0'},
+  {label:'Rose',     v:'#FF8FAB'},
+  {label:'White',    v:'#FFFFFF'},
+  {label:'Cream',    v:'#FFF8E8'},
+  {label:'Putih',    v:'#F5F0FF'},
+  {label:'Rainbow',  v:'rainbow'},
+  {label:'Hitam',    v:'#2C2A3A'},
+  {label:'Pink Tua', v:'#D470A2'},
+];
+
+function buildColorSwatches() {
+  const el = document.getElementById('colorSwatches');
+  el.innerHTML = '';
+  PALETTE.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'swatch' + (canvasOptions.borderColor===p.v ? ' on' : '');
+    div.title = p.label;
+    if (p.v==='rainbow') {
+      div.style.background = 'linear-gradient(135deg,#FFB3C8,#C9A8E8,#A8D8C8,#FFD54F,#80BFFF)';
+    } else {
+      div.style.background = p.v;
+    }
+    div.style.border = '2px solid rgba(0,0,0,0.06)';
+    div.onclick = () => {
+      canvasOptions.borderColor = p.v;
+      buildColorSwatches();
+      renderCanvas();
+    };
+    el.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════
+// EDITOR CONTROLS
+// ══════════════════════════════════
+function setFit(val, btn) {
+  canvasOptions.fit = val;
+  document.querySelectorAll('#fitCover,#fitContain').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderCanvas();
+}
+
+function setShowText(val, btn) {
+  canvasOptions.showText = val;
+  document.getElementById('showTextYes').classList.toggle('on', val);
+  document.getElementById('showTextNo').classList.toggle('on', !val);
+  document.getElementById('textInputRow').style.display = val ? '' : 'none';
+  renderCanvas();
+}
+
+function setBorderWidth(inp) {
+  canvasOptions.borderWidth = +inp.value;
+  document.getElementById('borderWidthVal').textContent = inp.value;
+  renderCanvas();
+}
+
+function setGap(inp) {
+  canvasOptions.gap = +inp.value;
+  document.getElementById('gapSizeVal').textContent = inp.value;
+  renderCanvas();
+}
+
+// ══════════════════════════════════
+// CANVAS RENDERING
+// ══════════════════════════════════
+async function loadImage(src) {
+  return new Promise((res,rej) => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = rej;
+    img.src = src;
+  });
+}
+
+function drawImageFit(ctx, img, x, y, w, h, fit='cover') {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  if (fit === 'cover') {
+    const scale = Math.max(w/img.width, h/img.height);
+    const sw = img.width * scale, sh = img.height * scale;
+    ctx.drawImage(img, x+(w-sw)/2, y+(h-sh)/2, sw, sh);
+  } else {
+    const scale = Math.min(w/img.width, h/img.height);
+    const sw = img.width * scale, sh = img.height * scale;
+    ctx.drawImage(img, x+(w-sw)/2, y+(h-sh)/2, sw, sh);
+  }
+  ctx.restore();
+}
+
+function createRainbowGrad(ctx, x1,y1,x2,y2) {
+  const g = ctx.createLinearGradient(x1,y1,x2,y2);
+  g.addColorStop(0,'#FFB3C8');
+  g.addColorStop(0.25,'#C9A8E8');
+  g.addColorStop(0.5,'#A8D8C8');
+  g.addColorStop(0.75,'#FFD54F');
+  g.addColorStop(1,'#80BFFF');
+  return g;
+}
+
+async function renderCanvas() {
+  const frame = selectedFrame;
+  if (!frame) return;
+
+  const canvas = document.getElementById('resultCanvas');
+  const loader = document.getElementById('canvasLoader');
+  const stamp = document.getElementById('stampDeco');
+  const { borderWidth:BW, gap:GAP, fit:FIT, borderColor:BC, showText:STXT } = canvasOptions;
+
+  const PHOTO_W = 420, PHOTO_H = 560;
+  const n = frame.shots;
+  const textH = STXT ? 50 : 0;
+
+  let cW, cH;
+  if (frame.layout === 'wide' || frame.layout === 'triple') {
+    cW = BW*2 + PHOTO_W * n + GAP*(n-1);
+    cH = BW*2 + PHOTO_H + textH;
+  } else if (frame.layout === 'grid2x3') {
+    const cols = 2, rows = Math.ceil(n/2);
+    cW = BW*2 + PHOTO_W*cols + GAP*(cols-1);
+    cH = BW*2 + PHOTO_H*rows + GAP*(rows-1) + textH;
+  } else if (frame.layout === 'polaroid') {
+    const PAD_BOT = 60;
+    cW = BW*2 + PHOTO_W;
+    cH = BW*2 + (PHOTO_H + GAP) * n - GAP + PAD_BOT + textH;
+  } else {
+    cW = BW*2 + PHOTO_W;
+    cH = BW*2 + PHOTO_H * n + GAP*(n-1) + textH;
+  }
+
+  canvas.width = cW;
+  canvas.height = cH;
+  const ctx = canvas.getContext('2d');
+
+  // background
+  if (BC === 'rainbow') {
+    const grad = ctx.createLinearGradient(0,0,cW,cH);
+    grad.addColorStop(0,'#FFB3C8'); grad.addColorStop(0.33,'#C9A8E8');
+    grad.addColorStop(0.66,'#A8D8C8'); grad.addColorStop(1,'#FFD54F');
+    ctx.fillStyle = grad;
+  } else {
+    ctx.fillStyle = BC || '#FFB3C8';
+  }
+  ctx.fillRect(0,0,cW,cH);
+
+  // floral decoration for floral-bloom frame
+  if (frame.id === 'floral-bloom' || frame.id === 'starry-night') {
+    ctx.font = `${BW * 0.8}px serif`;
+    const deco = frame.id === 'floral-bloom' ? ['🌸','🌸','🌸','🌸'] : ['⭐','✦','🌙','⭐'];
+    ctx.fillText(deco[0], 2, BW*0.9);
+    ctx.fillText(deco[1], cW - BW*0.9, BW*0.9);
+    ctx.fillText(deco[2], 2, cH - (textH+4));
+    ctx.fillText(deco[3], cW - BW*0.9, cH - (textH+4));
+  }
+
+  // load images
+  const imgs = [];
+  for (let i=0; i<n; i++) {
+    try { imgs.push(await loadImage(uploadedPhotos[i])); }
+    catch { imgs.push(null); }
+  }
+
+  // draw slots
+  if (frame.layout === 'wide' || frame.layout === 'triple') {
+    for (let i=0; i<n; i++) {
+      const x = BW + i*(PHOTO_W+GAP), y = BW;
+      if (imgs[i]) drawImageFit(ctx, imgs[i], x, y, PHOTO_W, PHOTO_H, FIT);
+      else { ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(x,y,PHOTO_W,PHOTO_H); }
+    }
+  } else if (frame.layout === 'grid2x3') {
+    for (let i=0; i<n; i++) {
+      const col=i%2, row=Math.floor(i/2);
+      const x=BW+col*(PHOTO_W+GAP), y=BW+row*(PHOTO_H+GAP);
+      if (imgs[i]) drawImageFit(ctx, imgs[i], x, y, PHOTO_W, PHOTO_H, FIT);
+      else { ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(x,y,PHOTO_W,PHOTO_H); }
+    }
+  } else if (frame.layout === 'polaroid') {
+    const PAD_BOT = 60;
+    const sH = (cH - BW*2 - textH - PAD_BOT - GAP*(n-1)) / n;
+    for (let i=0; i<n; i++) {
+      const x=BW, y=BW+i*(sH+GAP);
+      ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.fillRect(x-4,y-4,PHOTO_W+8,sH+8);
+      if (imgs[i]) drawImageFit(ctx, imgs[i], x, y, PHOTO_W, sH, FIT);
+    }
+  } else {
+    const sH = (cH - BW*2 - textH - GAP*(n-1)) / n;
+    for (let i=0; i<n; i++) {
+      const x=BW, y=BW+i*(sH+GAP);
+      if (imgs[i]) drawImageFit(ctx, imgs[i], x, y, PHOTO_W, sH, FIT);
+      else { ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(x,y,PHOTO_W,sH); }
+    }
+  }
+
+  // text footer
+  if (STXT) {
+    const textY = cH - textH;
+    const txt = canvasOptions.customText || 'picsy frame ✿';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = `${Math.max(16, BW*0.7)}px Georgia, serif`;
+    ctx.fillText(txt, cW/2, textY + textH/2);
+  }
+
+  loader.style.display = 'none';
+  canvas.style.display = 'block';
+  stamp.style.display = 'block';
+}
+
+// ══════════════════════════════════
+// DOWNLOAD
+// ══════════════════════════════════
+function downloadResult() {
+  const canvas = document.getElementById('resultCanvas');
+  const link = document.createElement('a');
+  link.download = `picsy-frame-${selectedFrame.id}-${Date.now()}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+</script>
 </body>
 </html>
